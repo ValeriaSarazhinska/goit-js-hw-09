@@ -1,6 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import {Notify} from 'notiflix/build/notiflix-notify-aio';
 
 const options = {
   enableTime: true,
@@ -10,6 +10,7 @@ const options = {
   onClose(selectedDates) {
     const date = new Date();
     if (date > selectedDates[0]) {
+      button.disabled = true
       return Notify.failure("Please choose a date in the future")
     }
     button.disabled = false
@@ -35,15 +36,19 @@ const timer = {
   start() {
     const startTime = fp.selectedDates[0]
 
-    setInterval(() => {
+    const timerId = setInterval(() => {
       const currentTime = Date.now()
       const deltaTime = startTime - currentTime
       const {days, hours, minutes, seconds} = convertMs(deltaTime)
-
+      if (deltaTime < 1000) {
+        clearInterval(timerId)
+      }
       dataDays.textContent = days
       dataHours.textContent = hours
       dataMinutes.textContent = minutes
       dataSeconds.textContent = seconds
+
+
     }, 1000)
   }
 }
